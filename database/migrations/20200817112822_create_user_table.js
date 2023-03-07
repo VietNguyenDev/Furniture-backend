@@ -6,10 +6,13 @@ exports.up = async (knex) => {
     table.integer('role', 1).unsigned().notNullable();
 
     table.string('full_name', 50).collate('utf8_general_ci').nullable();
+    table.string('phone', 20).nullable();
     table.string('address', 127).collate('utf8_general_ci').nullable();
     table.string('gender', 3).collate('utf8_general_ci').nullable();
     table.date('date_of_birth').nullable();
     table.string('image', 120).collate('latin1_general_ci').nullable();
+
+    table.string('refresh_token', 80).notNullable()
 
     table.timestamp('created_at').defaultTo(knex.raw('CURRENT_TIMESTAMP'));
     table.timestamp('updated_at').defaultTo(knex.raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
