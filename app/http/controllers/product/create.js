@@ -4,33 +4,48 @@ const productService = require('../../services/product');
 const { abort } = require('../../../helpers/error');
 
 async function validation({
-  name,
-  status,
-  buyingPrice,
-  sellingPrice,
-  quantity,
-  description,
-  categoryId,
+  product_name,
+  product_slug,
+  category_id,
+  subCategory_id,
+  product_code,
+  product_size,
+  product_color,
+  selling_price,
+  discount_price,
+  product_3d,
+  product_descp,
+  product_thumbnail
 }) {
   try {
     const schema = Joi.object().keys({
-      name: Joi.string(),
-      status: Joi.number(),
-      buyingPrice: Joi.number().min(0),
-      sellingPrice: Joi.number().min(0),
-      quantity: Joi.number().min(0),
-      description: Joi.string(),
-      categoryId: Joi.number().integer().min(0),
+      product_name: Joi.string(),
+      product_slug: Joi.string(),
+      category_id: Joi.number().integer().min(0),
+      subCategory_id: Joi.number().integer().min(0),
+      product_code: Joi.string(),
+      product_size: Joi.string(),
+      product_color: Joi.string(),
+      selling_price: Joi.number().min(0),
+      discount_price: Joi.number().min(0),
+      product_3d: Joi.string(),
+      product_descp: Joi.string(),
+      product_thumbnail: Joi.string(),
     });
 
     return await schema.validateAsync({
-      name,
-      status,
-      buyingPrice,
-      sellingPrice,
-      quantity,
-      description,
-      categoryId,
+      product_name,
+      product_slug,
+      category_id,
+      subCategory_id,
+      product_code,
+      product_size,
+      product_color,
+      selling_price,
+      discount_price,
+      product_3d,
+      product_descp,
+      product_thumbnail
     });
   } catch (error) {
     return abort(400, 'Params error');
@@ -39,35 +54,49 @@ async function validation({
 
 async function create(req, res) {
   const {
-    name,
-    status,
-    buyingPrice,
-    sellingPrice,
-    quantity,
-    description,
-    categoryId,
+    product_name,
+    product_slug,
+    category_id,
+    subCategory_id,
+    product_code,
+    product_size,
+    product_color,
+    selling_price,
+    discount_price,
+    product_3d,
+    product_descp,
+    product_thumbnail
   } = req.body;
   const productImg = req.file.filename;
 
   await validation({
-    name,
-    status,
-    buyingPrice,
-    sellingPrice,
-    quantity,
-    description,
-    categoryId,
+    product_name,
+    product_slug,
+    category_id,
+    subCategory_id,
+    product_code,
+    product_size,
+    product_color,
+    selling_price,
+    discount_price,
+    product_3d,
+    product_descp,
+    product_thumbnail
   });
 
   await productService.create({
-    name,
-    status,
-    buyingPrice,
-    sellingPrice,
-    quantity,
-    description,
-    categoryId,
-    productImg,
+    product_name,
+    product_slug,
+    category_id,
+    subCategory_id,
+    product_code,
+    product_size,
+    product_color,
+    selling_price,
+    discount_price,
+    product_3d,
+    product_descp,
+    product_thumbnail
   });
 
   return res.status(201).send();
