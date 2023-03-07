@@ -50,3 +50,16 @@ exports.getUsers = async ({
     total,
   };
 };
+
+exports.deleteUser = async ({id}) => {
+  const user = await User.query().findOne({id});
+  
+  if (!user) {
+    return abort(400, 'User not found');
+  }
+
+  await User.query().del();
+  
+  return ''
+}
+

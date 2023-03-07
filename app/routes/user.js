@@ -7,4 +7,5 @@ const router = express.Router();
 router.get('/users', userController.getUsers);
 router.put('/users', upload.single('userImg'), userController.updateUser);
 
+
 module.exports = router;
