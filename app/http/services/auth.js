@@ -28,27 +28,35 @@ exports.signUp = async ({
   const salt = parseInt(process.env.SALT_ROUNDS, 10);
   const hashPassword = await bcrypt.hash(password, salt);
 
-  const user = await User.query()
-    .insert({
-      email,
-      password: hashPassword,
-      role: roleEnum.USER,
-    });
+  if (roleEnum[role.toUpperCase()]) {
+    const user = await User.query()
+      .insert({
+        email,
+        password: hashPassword,
+        role: roleEnum.USER,
+      });
 
-  const result = {
-    id: user.id,
-    email: user.email,
-  };
+    const result = {
+      id: user.id,
+      email: user.email,
+    };
 
-  return result;
+    return result;
+  } else {
+    throw new Error('Invalid role')
+  }
 };
 
 exports.me = (req) => {
   const { user } = req;
 
-  delete user.password;
+  if (user.role === roleEnum.ADMIN || user.role === roleEnum.USER) {
+    delete user.password;
 
-  return user;
+    return user;
+  } else {
+    throw new Error('Unauthorized')
+  }  
 };
 
 exports.sendCode = async ({ email }) => {
