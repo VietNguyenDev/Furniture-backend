@@ -79,7 +79,7 @@ async function create(req, res) {
     product_color,
     selling_price,
     discount_price,
-    product_3d,
+    product_3d: productImg,
     product_descp,
     product_thumbnail
   });
@@ -94,7 +94,7 @@ async function create(req, res) {
     product_color,
     selling_price,
     discount_price,
-    product_3d,
+    product_3d: productImg,
     product_descp,
     product_thumbnail
   });
