@@ -42,9 +42,8 @@ exports.signUp = async ({
     };
 
     return result;
-  } else {
-    throw new Error('Invalid role')
   }
+  throw new Error('Invalid role');
 };
 
 exports.me = (req) => {
@@ -54,9 +53,8 @@ exports.me = (req) => {
     delete user.password;
 
     return user;
-  } else {
-    throw new Error('Unauthorized')
-  }  
+  }
+  throw new Error('Unauthorized');
 };
 
 exports.sendCode = async ({ email }) => {

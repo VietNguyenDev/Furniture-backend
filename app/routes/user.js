@@ -7,7 +7,8 @@ const checkPermission = require('../http/middlewares/permission');
 const router = express.Router();
 
 router.get('/users', userController.getUsers);
-router.put('/users', upload.single('userImg'), userController.updateUser);
-router.post('/users/:id', auth, checkPermission, userController.deleteUser )
+router.put('/users/:id', upload.single('userImg'), userController.updateUser);
+router.post('/users/:id', auth, checkPermission, userController.resetPasswordUser);
+router.post('/users/:id', auth, checkPermission, userController.deleteUser);
 
 module.exports = router;

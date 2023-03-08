@@ -3,7 +3,7 @@ exports.up = async (knex) => {
     table.increments('id').primary();
     table.string('product_name', 50).collate('utf8_general_ci').notNullable();
     table.string('product_slug', 50).collate('utf8_general_ci').notNullable();
-    
+
     table.string('product_code', 50).notNullable();
     table.string('product_size', 50).notNullable();
     table.string('product_color', 50).notNullable();
@@ -14,7 +14,7 @@ exports.up = async (knex) => {
     table.string('product_thumbnail').notNullable();
 
     table.integer('category_id').unsigned().references('categories.id').notNullable();
-    
+
     table.timestamp('created_at').defaultTo(knex.raw('CURRENT_TIMESTAMP'));
     table.timestamp('updated_at').defaultTo(knex.raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
 

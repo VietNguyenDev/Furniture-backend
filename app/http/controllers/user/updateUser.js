@@ -19,7 +19,8 @@ async function validation(userInformation) {
 }
 
 async function updateUser(req, res) {
-  const { id } = req.user;
+  const { id } = req.params;
+
   const {
     fullName,
     address,

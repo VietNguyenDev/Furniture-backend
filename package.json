@@ -46,6 +46,7 @@
     "xlsx": "^0.16.9"
   },
   "devDependencies": {
+    "@faker-js/faker": "^7.6.0",
     "chai": "^4.2.0",
     "eslint": "^7.2.0",
     "eslint-config-airbnb-base": "^14.2.0",

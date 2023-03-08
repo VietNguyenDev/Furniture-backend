@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const {
   User,
 } = require('../../models');
@@ -51,15 +52,27 @@ exports.getUsers = async ({
   };
 };
 
-exports.deleteUser = async ({id}) => {
-  const user = await User.query().findOne({id});
-  
+exports.deleteUser = async ({ id }) => {
+  const user = await User.query().findOne({ id });
+
   if (!user) {
     return abort(400, 'User not found');
   }
 
   await User.query().del();
-  
-  return ''
-}
 
+  return '';
+};
+
+exports.resetPasswordUser = async ({ id }) => {
+  const user = await User.query().findOne({ id });
+  if (!user) {
+    return abort(400, 'User not found');
+  }
+  const salt = parseInt(process.env.SALT_ROUNDS, 10);
+  const hashPassword = await bcrypt.hash(123456, salt);
+  await User.query().findById(id).update({
+    password: hashPassword,
+  });
+  return true;
+};
