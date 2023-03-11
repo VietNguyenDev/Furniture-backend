@@ -2,32 +2,37 @@ const { Category } = require('../../models');
 
 const { abort } = require('../../helpers/error');
 
-exports.create = async ({ category_name, category_icon, category_slug }) => {
-  const category = await Category.query().findOne({
-    category_name,
-  });
-
-  if (category) return abort(400, 'This category is already exits');
-
-  await Category.query().insert({ category_name, category_icon: category_icon, category_slug });
-
-  return '';
+exports.create = async ({ categoryName, categoryIcon, categorySlug }) => {
+  try {
+    const category = await Category.query().findOne({
+      categoryName,
+    });
+  
+    if (category) return abort(400, 'This category is already exits');
+  
+    const data = await Category.query().insert({ categoryName, categoryIcon: categoryIcon, categorySlug });
+  
+    return data;    
+  }
+  catch (error) {
+    return abort(400, 'Params error');
+  }
 };
 
-exports.update = async ({ categoryId, category_name, category_icon, category_slug }) => {
+exports.update = async ({ categoryId, categoryName, categoryIcon, categorySlug }) => {
   const category = await Category.query().findOne({
-    category_name,
+    categoryName,
   });
 
   if (category && category.id === categoryId) return abort(400, 'This category is already exits');
 
-  await Category.query().findById(categoryId).update({ category_name, category_icon: category_icon, category_slug });
+  await Category.query().findById(categoryId).update({ categoryName, categoryIcon: categoryIcon, categorySlug });
 
   return '';
 };
 
 exports.getList = () => {
-  const categories = Category.query().select('id', 'category_name', 'category_icon', 'category_slug');
+  const categories = Category.query().select('id', 'categoryName', 'categoryIcon', 'categorySlug');
 
   return categories;
 };

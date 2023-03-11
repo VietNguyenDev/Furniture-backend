@@ -3,14 +3,14 @@ const Joi = require('joi');
 const categoryService = require('../../services/category');
 const { abort } = require('../../../helpers/error');
 
-async function validation({ categoryId, category_name }) {
+async function validation({ categoryId, categoryName }) {
   try {
     const schema = Joi.object().keys({
       categoryId: Joi.number().integer().min(1),
-      category_name: Joi.string(),
+      categoryName: Joi.string(),
     });
 
-    return await schema.validateAsync({ categoryId, category_name });
+    return await schema.validateAsync({ categoryId, categoryName });
   } catch (error) {
     return abort(400, 'Params error');
   }
@@ -18,12 +18,12 @@ async function validation({ categoryId, category_name }) {
 
 async function update(req, res) {
   const { categoryId } = req.params;
-  const { category_name, category_slug } = req.body;
-  const iconCategory = req.file.filename;
+  const { categoryName, categorySlug } = req.body;
+  const categoryIcon = req.file.filename;
 
-  await validation({ categoryId, category_name });
+  await validation({ categoryId, categoryName });
 
-  await categoryService.update({ categoryId, category_name, category_icon: iconCategory, category_slug });
+  await categoryService.update({ categoryId, categoryName, categoryIcon: categoryIcon, categorySlug });
 
   return res.status(204).send();
 }

@@ -2,32 +2,35 @@ const Joi = require('joi');
 
 const categoryService = require('../../services/category');
 const { abort } = require('../../../helpers/error');
+const convertToSlug = require('../../../utils/common');
 
-async function validation({ category_name }) {
+async function validation({ categoryName }) {
   try {
+    if(!categoryName) return abort(400, 'Params error');
     const schema = Joi.object().keys({
-      category_name: Joi.string(),
+      categoryName: Joi.string(),
     });
 
-    return await schema.validateAsync({ category_name });
+    return await schema.validateAsync({ categoryName });
   } catch (error) {
     return abort(400, 'Params error');
   }
 }
 
 async function create(req, res) {
-  const { name } = req.body;
-  const iconCategory = req.file.filename;
-  const categoryInformation = {
-    category_name,
-    category_icon: iconCategory,
-    category_slug
-  };
-  await validation({ category_name });
-
-  await categoryService.create(categoryInformation);
-
-  return res.status(201).send();
+  try {
+    const { categoryName } = req.body;
+    await validation({ categoryName });
+    const categoryIcon = req.file.filename;
+    const categorySlug = convertToSlug(categoryName);
+    const result = await categoryService.create({ categoryName, categoryIcon , categorySlug});
+    return res.status(200).send({
+      data: result,
+      message: 'Create category successfully',
+    });
+  } catch (error) {
+    abort(error.status || 500, error.message);    
+  }
 }
 
 module.exports = create;

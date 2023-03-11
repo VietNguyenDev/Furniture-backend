@@ -25,7 +25,7 @@ const signUp = async (req, res) => {
   };
   await validate(params);
   const result = await auth.signUp(params);
-  return res.status(200).send(result);
+  return res.status(200).send({ data: result, message: 'Sign up successfully' });
 };
 
 module.exports = signUp;

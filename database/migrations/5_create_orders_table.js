@@ -1,4 +1,7 @@
 exports.up = async (knex) => {
+  //check if table exists
+  const hasTable = await knex.schema.hasTable('orders');
+  if (hasTable) return;
   await knex.schema.createTable('orders', (table) => {
     table.increments('id').primary();
     table.date('buy_date').notNullable();

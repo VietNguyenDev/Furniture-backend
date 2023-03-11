@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 const { Model } = require('objection');
 const cors = require('cors');
 const multer = require('multer');
+const morgan = require('morgan');
 
 const upload = multer({ dest: 'uploads/' });
 
@@ -17,7 +18,7 @@ Model.knex(knex);
 
 const app = express();
 const port = 8080;
-
+app.use(morgan('combined'))
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());

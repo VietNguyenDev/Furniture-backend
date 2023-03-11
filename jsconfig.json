@@ -4,5 +4,8 @@
     "target": "es6"
   },
   "exclude": ["node_modules"],
-  "include": ["app/**/*"]
+  "include": ["app/**/*"],
+  "paths": {
+    "app/*": ["app/*"]
+  }
 }

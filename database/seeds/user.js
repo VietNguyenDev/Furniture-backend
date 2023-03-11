@@ -1,8 +1,4 @@
-/* eslint-disable import/no-extraneous-dependencies */
 const { faker } = require('@faker-js/faker');
-const bcrypt = require('bcrypt');
-
-const salt = parseInt(process.env.SALT_ROUNDS, 10);
 
 exports.seed = async (knex) => {
   // Deletes ALL existing entries
@@ -20,7 +16,7 @@ exports.seed = async (knex) => {
     created_at: faker.date.past(),
     updated_at: faker.date.past(),
     image: faker.image.avatar(),
+    refresh_token: faker.random.alphaNumeric(80),
   }));
-  console.log(users);
   await knex('users').insert(users);
 };
