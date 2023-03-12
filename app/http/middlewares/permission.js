@@ -5,7 +5,7 @@ const checkPermission = async (req, res, next) => {
 
   if (userRole === roleEnum.USER) {
     return res.status(403).send({
-      message: 'Forbidden',
+      message: 'No permission to access this resource',
     });
   }
 

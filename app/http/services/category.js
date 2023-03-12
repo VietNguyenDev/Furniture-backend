@@ -1,16 +1,17 @@
 const { Category } = require('../../models');
 
 const { abort } = require('../../helpers/error');
+const { uploadImage } = require('../../config/cloudinary');
 
-exports.create = async ({ categoryName, categoryIcon, categorySlug }) => {
+exports.create = async ({ categoryName, imageFilePath, categorySlug, imageFileName }) => {
   try {
     const category = await Category.query().findOne({
       categoryName,
     });
   
     if (category) return abort(400, 'This category is already exits');
-  
-    const data = await Category.query().insert({ categoryName, categoryIcon: categoryIcon, categorySlug });
+    const result = await uploadImage(imageFilePath, imageFileName);
+    const data = await Category.query().insert({ categoryName, categoryIcon: result.secure_url, categorySlug });
   
     return data;    
   }
@@ -38,11 +39,16 @@ exports.getList = () => {
 };
 
 exports.remove = async ({ categoryId }) => {
-  const category = await Category.query().findById(categoryId);
+  try {
+    const category = await Category.query().findById(categoryId);
 
-  if (!category) return abort(400, 'This category is not already exists');
-
-  await Category.query().findById(categoryId).delete();
-
-  return '';
+    if (!category) return abort(400, 'This category is not already exists');
+  
+    await Category.query().findById(categoryId).delete();
+  
+    return ;
+      
+  } catch (error) {
+    abort(400, 'Params error');    
+  }
 };

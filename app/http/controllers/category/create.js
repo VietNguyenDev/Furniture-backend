@@ -13,6 +13,7 @@ async function validation({ categoryName }) {
 
     return await schema.validateAsync({ categoryName });
   } catch (error) {
+    console.log(error);
     return abort(400, 'Params error');
   }
 }
@@ -21,15 +22,16 @@ async function create(req, res) {
   try {
     const { categoryName } = req.body;
     await validation({ categoryName });
-    const categoryIcon = req.file.filename;
+    const imageFilePath = req.file.path;
+    const imageFileName = req.file.filename;
     const categorySlug = convertToSlug(categoryName);
-    const result = await categoryService.create({ categoryName, categoryIcon , categorySlug});
+    const result = await categoryService.create({ categoryName, imageFilePath, imageFileName , categorySlug});
     return res.status(200).send({
       data: result,
       message: 'Create category successfully',
     });
   } catch (error) {
-    abort(error.status || 500, error.message);    
+    abort(error.status, error.message);    
   }
 }
 

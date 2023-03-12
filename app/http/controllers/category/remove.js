@@ -16,13 +16,19 @@ async function validation({ categoryId }) {
 }
 
 async function remove(req, res) {
-  const { categoryId } = req.params;
+  try {
+    const { categoryId } = req.params;
 
-  await validation({ categoryId });
+    await validation({ categoryId });
+  
+    await categoryService.remove({ categoryId });
+    return res.status(200).send({
+      message: 'Category removed successfully',
+    });    
+  } catch (error) {
+    abort(500, 'Internal server error');
+  }
 
-  await categoryService.remove({ categoryId });
-
-  return res.status(204).send();
 }
 
 module.exports = remove;
