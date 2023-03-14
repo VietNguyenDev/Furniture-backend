@@ -1,50 +1,51 @@
+/* eslint-disable no-undef */
 const { Product, Category } = require('../../models');
 
 const { abort } = require('../../helpers/error');
 
 exports.create = async ({
-    product_name,
-    product_slug,
-    category_id,
-    subCategory_id,
-    product_code,
-    product_size,
-    product_color,
-    selling_price,
-    discount_price,
-    product_3d,
-    product_descp,
-    product_thumbnail
+    productName,
+    productSlug,
+    categoryId,
+    subCategoryId,
+    productCode,
+    productSize,
+    productColor,
+    sellingPrice,
+    discountPrice,
+    product3D,
+    productDescp,
+    productThumbnail
 }) => {
   const product = await Product.query().findOne({
-    product_name,
+    productName,
   });
 
   if (product) return abort(400, 'This product is already exits');
 
-  const category = await Category.query().findById(category_id);
+  const category = await Category.query().findById(categoryId);
 
   if (!category) return abort(400, 'This category is not already exits');
 
   await Product.query().insert({
-    product_name,
-    product_slug,
-    subCategory_id,
-    product_code,
-    product_size,
-    product_color,
-    discount_price: discount_price,
-    selling_price: selling_price,
-    product_descp,
-    category_id: category_id,
-    product_3d: `${process.env.APP_URL_UPLOAD}/${product_3d}`,
-    product_thumbnail
+    productName,
+    productSlug,
+    subCategoryId,
+    productCode,
+    productSize,
+    productColor,
+    discountPrice: discountPrice,
+    sellingPrice: sellingPrice,
+    productDescp,
+    categoryId: categoryId,
+    product3D: `${process.env.APP_URL_UPLOAD}/${product3D}`,
+    productThumbnail
   });
 
   return '';
 };
 
-exports.getList = async ({ limit, page, category_id }) => {
+exports.getList = async ({ limit, page, categoryId }) => {
   const offset = page * limit - limit;
 
   let products = Product.query()
@@ -52,9 +53,9 @@ exports.getList = async ({ limit, page, category_id }) => {
 
   let total = Product.query().count();
 
-  if (category_id && category_id.length) {
-    products.whereIn('category_id', category_id);
-    total.whereIn('category_id', category_id);
+  if (categoryId && categoryId.length) {
+    products.whereIn('categoryId', categoryId);
+    total.whereIn('categoryId', categoryId);
   }
 
   products = await products;
@@ -63,8 +64,8 @@ exports.getList = async ({ limit, page, category_id }) => {
   return { products, total };
 };
 
-exports.getDetail = async ({ product_id }) => {
-  const product = await Product.query().findById(product_id);
+exports.getDetail = async ({ productId }) => {
+  const product = await Product.query().findById(productId);
 
   if (!product) return abort(400, 'Product is not already exists');
 
@@ -72,51 +73,54 @@ exports.getDetail = async ({ product_id }) => {
 };
 
 exports.update = async ({
-  product_id,
-  product_name,
-  category_id,
-  subCategory_id,
-  product_code,
-  product_size,
-  selling_price,
-  discount_price,
-  product_descp,
-  product_3d,
-  product_thumbnail
+  productId,
+  productName,
+  productSlug,
+  subCategoryId,
+  productCode,
+  productSize,
+  productColor,
+  discountPrice,
+  sellingPrice,
+  productDescp,
+  categoryId,
+  product3D,
+  productThumbnail
 }) => {
   const product = await Product.query().findOne({
-    product_name,
+    productName,
   });
 
-  if (product && product.id === product_id) return abort(400, 'This product is already exits');
+  if (product && product.id === productId) return abort(400, 'This product is already exits');
 
-  const category = await Category.query().findById(category_id);
+  const category = await Category.query().findById(categoryId);
 
   if (!category) return abort(400, 'This category is not already exits');
 
-  await Product.query().findById(product_id).update({
-    product_name,
-    product_name,
-    category_id: category_id,
-    subCategory_id,
-    product_code,
-    product_size,
-    selling_price: selling_price,
-    discount_price,
-    product_descp,
-    product_3d: `${process.env.APP_URL_UPLOAD}/${product_3d}`,
-    product_thumbnail
+  await Product.query().findById(productId).update({
+    productName,
+    productSlug,
+    subCategoryId,
+    productCode,
+    productSize,
+    productColor,
+    discountPrice: discountPrice,
+    sellingPrice: sellingPrice,
+    productDescp,
+    categoryId: categoryId,
+    product3D: `${process.env.APP_URL_UPLOAD}/${product3D}`,
+    productThumbnail
   });
 
   return '';
 };
 
-exports.remove = async ({ product_id }) => {
-  const product = await Product.query().findById(product_id);
+exports.remove = async ({ productId }) => {
+  const product = await Product.query().findById(productId);
 
   if (!product) return abort(400, 'Product is not already exists');
 
-  await Product.query().findById(product_id).delete();
+  await Product.query().findById(productId).delete();
 
   return '';
 };
