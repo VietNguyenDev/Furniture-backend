@@ -3,13 +3,13 @@ const Joi = require('joi');
 const productService = require('../../services/product');
 const { abort } = require('../../../helpers/error');
 
-async function validation({ product_id }) {
+async function validation({ productId }) {
   try {
     const schema = Joi.object().keys({
-      product_id: Joi.number().min(1),
+      productId: Joi.number().min(1),
     });
 
-    return await schema.validateAsync({ product_id });
+    return await schema.validateAsync({ productId });
   } catch (error) {
     return abort(400, 'Params error');
   }
