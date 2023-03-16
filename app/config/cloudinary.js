@@ -1,5 +1,6 @@
 const cloudinary = require('cloudinary').v2;
 const fs = require('fs');
+const streamifier = require('streamifier')
 
 // Configuration 
 cloudinary.config({
@@ -28,6 +29,7 @@ function uploadImage(localFilePath, fileName) {
   });
 }
 
+
 module.exports = {
-  uploadImage
+  uploadImage,
 };

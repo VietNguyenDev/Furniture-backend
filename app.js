@@ -17,7 +17,7 @@ Model.knex(knex);
 if (!fs.existsSync("./uploads")) {
   fs.mkdirSync("./uploads");
 }
-const upload = multer({ dest: 'uploads/' });
+// const upload = multer({ dest: 'uploads/' });
 
 const app = express();
 const port = 8080;
@@ -26,7 +26,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 // app.use(upload.array()); // for parsing multipart/form-data
-app.use("/uploads", express.static("uploads"));
+// app.use("/uploads", express.static("uploads"));
 Object.keys(routes).map((route) => app.use('/api', routes[route]));
 
 app.use((req, res) => {

@@ -10,7 +10,7 @@ exports.up = async (knex) => {
     table.integer('sellingPrice').unsigned().notNullable();
     table.integer('discountPrice').unsigned().notNullable();
     table.string('product3D').collate('latin1_general_ci').notNullable();
-    table.text('productDescp').collate('utf8_general_ci').notNullable();
+    table.text('productDescription').collate('utf8_general_ci').notNullable();
     table.string('productThumbnail').collate('latin1_general_ci').notNullable();
 
     table.integer('categoryId').unsigned().references('categories.id').notNullable();

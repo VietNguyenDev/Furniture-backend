@@ -3,59 +3,53 @@ const { Product, Category } = require('../../models');
 
 const { abort } = require('../../helpers/error');
 
-exports.create = async ({
-    productName,
-    productSlug,
-    categoryId,
-    subCategoryId,
-    productCode,
-    productSize,
-    productColor,
-    sellingPrice,
-    discountPrice,
-    product3D,
-    productDescp,
-    productThumbnail
-}) => {
-  const product = await Product.query().findOne({
-    productName,
+exports.create = async (params) => {
+  // check product is already exits
+
+  const isExitsProduct  = await Product.query().findOne({
+    productName: params.productName,
   });
 
-  if (product) return abort(400, 'This product is already exits');
+  if (isExitsProduct) return abort(400, 'This product is already exits');
 
-  const category = await Category.query().findById(categoryId);
+  const isExitsCategory = await Category.query().findById(params.categoryId);
 
-  if (!category) return abort(400, 'This category is not already exits');
+  if (!isExitsCategory) return abort(400, 'This category is not already exits');
 
-  await Product.query().insert({
-    productName,
-    productSlug,
-    subCategoryId,
-    productCode,
-    productSize,
-    productColor,
-    discountPrice: discountPrice,
-    sellingPrice: sellingPrice,
-    productDescp,
-    categoryId: categoryId,
-    product3D: `${process.env.APP_URL_UPLOAD}/${product3D}`,
-    productThumbnail
-  });
+  const result = await Product.query().insert(params);
 
-  return '';
+  return result;
 };
 
-exports.getList = async ({ limit, page, categoryId }) => {
+exports.getList = async ({ limit, page, categoryId, sortBy }) => {
   const offset = page * limit - limit;
-
-  let products = Product.query()
-    .offset(offset).limit(limit);
+  const [field, type] = sortBy.split('=');
+  console.log(field, type);
+  let products = Product.query().offset(offset).limit(limit);
 
   let total = Product.query().count();
 
-  if (categoryId && categoryId.length) {
-    products.whereIn('categoryId', categoryId);
-    total.whereIn('categoryId', categoryId);
+  if (categoryId) {
+    // filter by category
+    products = Product.query()
+      .offset(offset)
+      .limit(limit)
+      .where('categoryId', categoryId);
+    
+    total = Product.query()
+      .count()
+      .where('categoryId', categoryId);
+  }
+  if (sortBy) {
+    // sort by field
+    products = Product.query()
+      .offset(offset)
+      .limit(limit)
+      .orderBy(field, type);
+    
+    total = Product.query()
+      .count()
+      .orderBy(field, type);
   }
 
   products = await products;
@@ -82,35 +76,38 @@ exports.update = async ({
   productColor,
   discountPrice,
   sellingPrice,
-  productDescp,
+  productDescription,
   categoryId,
   product3D,
-  productThumbnail
+  productThumbnail,
 }) => {
   const product = await Product.query().findOne({
     productName,
   });
 
-  if (product && product.id === productId) return abort(400, 'This product is already exits');
+  if (product && product.id === productId)
+    return abort(400, 'This product is already exits');
 
   const category = await Category.query().findById(categoryId);
 
   if (!category) return abort(400, 'This category is not already exits');
 
-  await Product.query().findById(productId).update({
-    productName,
-    productSlug,
-    subCategoryId,
-    productCode,
-    productSize,
-    productColor,
-    discountPrice: discountPrice,
-    sellingPrice: sellingPrice,
-    productDescp,
-    categoryId: categoryId,
-    product3D: `${process.env.APP_URL_UPLOAD}/${product3D}`,
-    productThumbnail
-  });
+  await Product.query()
+    .findById(productId)
+    .update({
+      productName,
+      productSlug,
+      subCategoryId,
+      productCode,
+      productSize,
+      productColor,
+      discountPrice: discountPrice,
+      sellingPrice: sellingPrice,
+      productDescription,
+      categoryId: categoryId,
+      product3D: `${process.env.APP_URL_UPLOAD}/${product3D}`,
+      productThumbnail,
+    });
 
   return '';
 };
@@ -123,4 +120,18 @@ exports.remove = async ({ productId }) => {
   await Product.query().findById(productId).delete();
 
   return '';
+};
+
+exports.uploadFile = async (req, res) => {
+  try {
+    const { file } = req;
+
+    if (!file) return res.status(400).json({ message: 'File is required' });
+
+    return res
+      .status(200)
+      .json({ message: 'Upload file success', data: file.filename });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
 };

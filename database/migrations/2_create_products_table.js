@@ -1,26 +1,26 @@
 exports.up = async (knex) => {
   await knex.schema.createTable('products', (table) => {
     table.increments('id').primary();
-    table.string('product_name', 50).collate('utf8_general_ci').notNullable();
-    table.string('product_slug', 50).collate('utf8_general_ci').notNullable();
+    table.string('productName', 250).collate('utf8_general_ci').notNullable();
+    table.string('productSlug', 250).collate('utf8_general_ci').notNullable();
+    table.string('productImg', 250).collate('utf8_general_ci').notNullable();
+    table.string('productCode', 50).notNullable();
+    table.string('productSize', 50).notNullable();
+    table.string('productColor', 50).notNullable();
+    table.integer('sellingPrice').unsigned().notNullable();
+    table.integer('discountPrice').unsigned().notNullable();
+    table.string('product3DModelPath').collate('latin1_general_ci').notNullable();
+    table.text('productDescription').collate('utf8_general_ci').notNullable();
+    table.string('productThumbnail').notNullable();
 
-    table.string('product_code', 50).notNullable();
-    table.string('product_size', 50).notNullable();
-    table.string('product_color', 50).notNullable();
-    table.integer('selling_price').unsigned().notNullable();
-    table.integer('discount_price').unsigned().notNullable();
-    table.string('product_3d').collate('latin1_general_ci').notNullable();
-    table.text('product_descp').collate('utf8_general_ci').notNullable();
-    table.string('product_thumbnail').notNullable();
+    table.integer('categoryId').unsigned().references('categories.id').notNullable();
 
-    table.integer('category_id').unsigned().references('categories.id').notNullable();
+    table.timestamp('createdAt').defaultTo(knex.raw('CURRENT_TIMESTAMP'));
+    table.timestamp('updatedAt').defaultTo(knex.raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
 
-    table.timestamp('created_at').defaultTo(knex.raw('CURRENT_TIMESTAMP'));
-    table.timestamp('updated_at').defaultTo(knex.raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
+    table.unique('productName');
 
-    table.unique('product_name');
-
-    table.index('category_id');
+    table.index('categoryId');
   });
 };
 

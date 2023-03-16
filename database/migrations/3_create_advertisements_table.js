@@ -1,7 +1,7 @@
 exports.up = async (knex) => {
   //check if table exists
-  const hasTable = await knex.schema.hasTable('advertisements');
-  if (hasTable) return;
+  // const hasTable = await knex.schema.hasTable('advertisements');
+  // if (hasTable) return;
   await knex.schema.createTable('advertisements', (table) => {
     table.increments('id').primary();
     table.string('content', 100).collate('utf8_general_ci').notNullable();

@@ -15,7 +15,7 @@ async function validation({
   sellingPrice,
   discountPrice,
   product3D,
-  productDescp,
+  productDescription,
   productThumbnail
 }) {
   try {
@@ -31,7 +31,7 @@ async function validation({
       sellingPrice: Joi.number().min(0),
       discountPrice: Joi.number().min(0),
       product3D: Joi.string(),
-      productDescp: Joi.string(),
+      productDescription: Joi.string(),
       productThumbnail: Joi.string(),
     });
 
@@ -47,7 +47,7 @@ async function validation({
       sellingPrice,
       discountPrice,
       product3D,
-      productDescp,
+      productDescription,
       productThumbnail
     });
   } catch (error) {
@@ -66,7 +66,7 @@ async function update(req, res) {
     productColor,
     sellingPrice,
     discountPrice,
-    productDescp,
+    productDescription,
     productThumbnail
   } = req.body;
   const { productId } = req.params;
@@ -84,7 +84,7 @@ async function update(req, res) {
     sellingPrice,
     discountPrice,
     product3D: productImg,
-    productDescp,
+    productDescription,
     productThumbnail
   });
 
@@ -100,7 +100,7 @@ async function update(req, res) {
     sellingPrice,
     discountPrice,
     product3D: productImg,
-    productDescp,
+    productDescription,
     productThumbnail
   });
 

@@ -16,7 +16,7 @@ exports.create = async ({ categoryName, imageFilePath, categorySlug, imageFileNa
     return data;    
   }
   catch (error) {
-    return abort(400, 'Params error');
+    return abort(error.status, error.message);
   }
 };
 
