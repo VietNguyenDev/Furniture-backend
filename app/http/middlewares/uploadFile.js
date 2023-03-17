@@ -2,7 +2,7 @@ const multer = require('multer');
 const path = require('path');
 
 async function checkFileType(file, cb) {
-  const fileTypes = /jpeg|jpg|png|svg/;
+  const fileTypes = /jpeg|jpg|png|svg|glb/;
   const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
 
   if (extname) {

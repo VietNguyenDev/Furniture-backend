@@ -3,7 +3,7 @@ const Joi = require('joi');
 const productService = require('../../services/product');
 const { abort } = require('../../../helpers/error');
 const convertToSlug = require('../../../utils/common');
-const { uploadImage } = require('../../../config/cloudinary');
+const { uploadImage, upload3D } = require('../../../config/cloudinary');
 
 async function validation({
   productName,
@@ -57,12 +57,15 @@ async function validation({
 async function create(req, res) {
   try {
     const params = req.body;
-    const productFileName = req.file.filename;
-    const productFilePath = req.file.path;
+    const listFile = req.files;
+    const findIndexHaveFileIsGlb = listFile.findIndex((file) => file.originalname.includes('.glb'));
+    const resultFile3D = await upload3D(listFile[findIndexHaveFileIsGlb].path);
+    //remove file glb in list file
+    listFile.splice(findIndexHaveFileIsGlb, 1);
+    const resultFileImage = await uploadImage(listFile[0].path);
     const productSlug = convertToSlug(params.productName);
-    const result = await uploadImage(productFilePath, productFileName);
-    await validation({ ...params, productSlug, productImg: result.secure_url });
-    const data = await productService.create({ ...params, productImg: result.secure_url, productSlug });
+    await validation({ ...params, productSlug, productImg: resultFileImage.secure_url, product3DModelPath:  resultFile3D.secure_url});
+    const data = await productService.create({ ...params, productImg: resultFileImage.secure_url, productSlug, product3DModelPath:  resultFile3D.secure_url });
     if (data) {
       return res.status(200).send({
         message: 'Create product success',
