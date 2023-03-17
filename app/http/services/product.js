@@ -6,7 +6,7 @@ const { abort } = require('../../helpers/error');
 exports.create = async (params) => {
   // check product is already exits
 
-  const isExitsProduct  = await Product.query().findOne({
+  const isExitsProduct = await Product.query().findOne({
     productName: params.productName,
   });
 
@@ -23,34 +23,38 @@ exports.create = async (params) => {
 
 exports.getList = async ({ limit, page, categoryId, sortBy }) => {
   const offset = page * limit - limit;
-  const [field, type] = sortBy.split('=');
-  console.log(field, type);
+  // const [field, type] = sortBy.split('=');
+  // console.log(field, type);
   let products = Product.query().offset(offset).limit(limit);
 
   let total = Product.query().count();
 
   if (categoryId) {
     // filter by category
+    console.log('cate', categoryId);
     products = Product.query()
       .offset(offset)
       .limit(limit)
       .where('categoryId', categoryId);
-    
+
     total = Product.query()
       .count()
       .where('categoryId', categoryId);
-  }
-  if (sortBy) {
-    // sort by field
-    products = Product.query()
-      .offset(offset)
-      .limit(limit)
-      .orderBy(field, type);
+
     
-    total = Product.query()
-      .count()
-      .orderBy(field, type);
+    // console.log(products);
   }
+  // if (sortBy) {
+  //   // sort by field
+  //   products = Product.query()
+  //     .offset(offset)
+  //     .limit(limit)
+  //     .orderBy(field, type);
+
+  //   total = Product.query()
+  //     .count()
+  //     .orderBy(field, type);
+  // }
 
   products = await products;
   [{ 'count(*)': total }] = await total;

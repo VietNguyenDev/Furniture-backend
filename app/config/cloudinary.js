@@ -29,7 +29,25 @@ function uploadImage(localFilePath, fileName) {
   });
 }
 
+function upload3D(localFilePath) {
+  // filePathOnCloudinary: path of image we want
+  // to set when it is uploaded to cloudinary
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader.upload(localFilePath, { resource_type: "image" } , (err, result) => {
+      if (err) {
+        fs.unlinkSync(localFilePath);
+        reject(err);
+      } else {
+
+        fs.unlinkSync(localFilePath);
+        resolve(result);
+      }
+    });
+  });
+}
+
 
 module.exports = {
   uploadImage,
+  upload3D
 };

@@ -26,6 +26,7 @@ async function getList(req, res) {
     await validation({ limit, page });
   
     const products = await productService.getList({ limit, page, categoryId, sortBy });
+    console.log(products);
   
     return res.status(200).send(products);
   } catch (error) {
