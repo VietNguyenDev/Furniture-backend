@@ -47,7 +47,7 @@ async function validation({
       categoryId,
       productThumbnail,
       product3DModelPath,
-      productImg
+      productImg,
     });
   } catch (error) {
     return abort(400, 'Params error');
@@ -58,20 +58,31 @@ async function create(req, res) {
   try {
     const params = req.body;
     const listFile = req.files;
-    const findIndexHaveFileIsGlb = listFile.findIndex((file) => file.originalname.includes('.glb'));
-    const resultFile3D = await upload3D(listFile[findIndexHaveFileIsGlb].path);
+    const findIndexHaveFileIsGlb = listFile.findIndex((file) =>
+      file.originalname.includes('.glb')
+    );
+    const resultFile3D = await upload3D(listFile[findIndexHaveFileIsGlb]?.path);
     //remove file glb in list file
     listFile.splice(findIndexHaveFileIsGlb, 1);
     const resultFileImage = await uploadImage(listFile[0].path);
     const productSlug = convertToSlug(params.productName);
-    await validation({ ...params, productSlug, productImg: resultFileImage.secure_url, product3DModelPath:  resultFile3D.secure_url});
-    const data = await productService.create({ ...params, productImg: resultFileImage.secure_url, productSlug, product3DModelPath:  resultFile3D.secure_url });
+    await validation({
+      ...params,
+      productSlug,
+      productImg: resultFileImage?.secure_url,
+      product3DModelPath: resultFile3D?.secure_url,
+    });
+    const data = await productService.create({
+      ...params,
+      productImg: resultFileImage?.secure_url,
+      productSlug,
+      product3DModelPath: resultFile3D?.secure_url,
+    });
     if (data) {
       return res.status(200).send({
         message: 'Create product success',
         data,
       });
-      
     }
   } catch (error) {
     abort(error.status, error.message);

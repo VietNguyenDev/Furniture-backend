@@ -4,7 +4,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const { Model } = require('objection');
 const cors = require('cors');
-const multer = require('multer');
+// const multer = require('multer');
 const morgan = require('morgan');
 const fs = require('fs');
 
@@ -14,14 +14,14 @@ const routes = require('./app/routes');
 const knex = require('./database/knex');
 
 Model.knex(knex);
-if (!fs.existsSync("./uploads")) {
-  fs.mkdirSync("./uploads");
+if (!fs.existsSync('./uploads')) {
+  fs.mkdirSync('./uploads');
 }
 // const upload = multer({ dest: 'uploads/' });
 
 const app = express();
 const port = 8080;
-app.use(morgan('combined'))
+app.use(morgan('combined'));
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
