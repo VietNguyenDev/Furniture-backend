@@ -64,7 +64,7 @@ async function create(req, res) {
     const resultFile3D = await upload3D(listFile[findIndexHaveFileIsGlb]?.path);
     //remove file glb in list file
     listFile.splice(findIndexHaveFileIsGlb, 1);
-    const resultFileImage = await uploadImage(listFile[0].path);
+    const resultFileImage = await uploadImage(listFile[0]?.path);
     const productSlug = convertToSlug(params.productName);
     await validation({
       ...params,

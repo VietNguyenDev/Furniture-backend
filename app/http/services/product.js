@@ -66,50 +66,18 @@ exports.getDetail = async ({ productId }) => {
   return product;
 };
 
-exports.update = async ({
-  productId,
-  productName,
-  productSlug,
-  subCategoryId,
-  productCode,
-  productSize,
-  productColor,
-  discountPrice,
-  sellingPrice,
-  productDescription,
-  categoryId,
-  product3D,
-  productThumbnail,
-}) => {
-  const product = await Product.query().findOne({
-    productName,
-  });
+exports.update = async (params) => {
+  const product = await Product.query().findById(params.productId);
+  if (!product) return abort(400, 'This product is not already exits')
 
-  if (product && product.id === productId)
-    return abort(400, 'This product is already exits');
-
-  const category = await Category.query().findById(categoryId);
-
+  const category = await Category.query().findById(params.categoryId);
   if (!category) return abort(400, 'This category is not already exits');
 
-  await Product.query()
-    .findById(productId)
-    .update({
-      productName,
-      productSlug,
-      subCategoryId,
-      productCode,
-      productSize,
-      productColor,
-      discountPrice: discountPrice,
-      sellingPrice: sellingPrice,
-      productDescription,
-      categoryId: categoryId,
-      product3D: `${process.env.APP_URL_UPLOAD}/${product3D}`,
-      productThumbnail,
-    });
-
-  return '';
+  const {productId, ...paramsWithoutId} = params;
+  
+  const result = await Product.query().findById(productId).update(paramsWithoutId);
+  
+  return result;
 };
 
 exports.remove = async ({ productId }) => {

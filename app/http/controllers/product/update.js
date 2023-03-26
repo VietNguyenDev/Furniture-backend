@@ -2,21 +2,23 @@ const Joi = require('joi');
 
 const productService = require('../../services/product');
 const { abort } = require('../../../helpers/error');
+const { uploadImage, upload3D } = require('../../../config/cloudinary');
+const convertToSlug = require('../../../utils/common');
 
 async function validation({
   productId,
   productName,
   productSlug,
-  categoryId,
-  subCategoryId,
   productCode,
   productSize,
   productColor,
-  sellingPrice,
   discountPrice,
-  product3D,
+  sellingPrice,
   productDescription,
-  productThumbnail
+  categoryId,
+  productThumbnail,
+  product3DModelPath,
+  productImg,
 }) {
   try {
     const schema = Joi.object().keys({
@@ -24,31 +26,31 @@ async function validation({
       productName: Joi.string(),
       productSlug: Joi.string(),
       categoryId: Joi.number().integer().min(0),
-      subCategoryId: Joi.number().integer().min(0),
       productCode: Joi.string(),
       productSize: Joi.string(),
       productColor: Joi.string(),
       sellingPrice: Joi.number().min(0),
       discountPrice: Joi.number().min(0),
-      product3D: Joi.string(),
       productDescription: Joi.string(),
       productThumbnail: Joi.string(),
+      product3DModelPath: Joi.string(),
+      productImg: Joi.string(),
     });
 
     return await schema.validateAsync({
       productId,
       productName,
       productSlug,
-      categoryId,
-      subCategoryId,
       productCode,
       productSize,
       productColor,
-      sellingPrice,
       discountPrice,
-      product3D,
+      sellingPrice,
       productDescription,
-      productThumbnail
+      categoryId,
+      productThumbnail,
+      product3DModelPath,
+      productImg,
     });
   } catch (error) {
     return abort(400, 'Params error');
@@ -56,55 +58,47 @@ async function validation({
 }
 
 async function update(req, res) {
-  const {
-    productName,
-    productSlug,
-    categoryId,
-    subCategoryId,
-    productCode,
-    productSize,
-    productColor,
-    sellingPrice,
-    discountPrice,
-    productDescription,
-    productThumbnail
-  } = req.body;
-  const { productId } = req.params;
-  const productImg = req.file.filename;
+  try {
+    const { productId, categoryId } = req.params;
 
-  await validation({
-    productId,
-    productName,
-    productSlug,
-    categoryId,
-    subCategoryId,
-    productCode,
-    productSize,
-    productColor,
-    sellingPrice,
-    discountPrice,
-    product3D: productImg,
-    productDescription,
-    productThumbnail
-  });
+    
+    const params = req.body;
+    const listFile = req.files;
+    const findIndexHaveFileIsGlb = listFile.findIndex((file) => file.originalname.includes('.glb'));
+    const resultFile3D = await upload3D(listFile[findIndexHaveFileIsGlb]?.path);
 
-  await productService.update({
-    productId,
-    productName,
-    productSlug,
-    categoryId,
-    subCategoryId,
-    productCode,
-    productSize,
-    productColor,
-    sellingPrice,
-    discountPrice,
-    product3D: productImg,
-    productDescription,
-    productThumbnail
-  });
+    listFile.splice(findIndexHaveFileIsGlb, 1);
+    const resultFileImage = await uploadImage(listFile[0]?.path);
+    const productSlug = convertToSlug(params.productName);
+    
+    await validation({
+      ...params,
+      productId: productId,
+      categoryId: categoryId,
+      productSlug,
+      productImg: resultFileImage?.secure_url,
+      product3DModelPath: resultFile3D?.secure_url,
+    });
 
-  return res.status(204).send();
+    const data = await productService.update({
+      ...params,
+      productId: productId,
+      categoryId: categoryId,
+      productImg: resultFileImage?.secure_url,
+      productSlug,
+      product3DModelPath: resultFile3D?.secure_url,
+    });
+    if (data) {
+      return res.status(204).send({
+        message: 'Update product success',
+        data,
+      });
+    }
+
+    
+  } catch (error) {
+    abort (400, error.message)
+  }
 }
 
 module.exports = update;
