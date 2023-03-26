@@ -31,17 +31,13 @@ exports.getList = async ({ limit, page, categoryId, sortBy }) => {
 
   if (categoryId) {
     // filter by category
-    console.log('cate', categoryId);
     products = Product.query()
       .offset(offset)
       .limit(limit)
       .where('categoryId', categoryId);
 
-    total = Product.query()
-      .count()
-      .where('categoryId', categoryId);
+    total = Product.query().count().where('categoryId', categoryId);
 
-    
     // console.log(products);
   }
   // if (sortBy) {
