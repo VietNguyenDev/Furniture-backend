@@ -1,7 +1,7 @@
 const { abort } = require('../../../helpers/error');
 const searchService = require('../../services/search');
 
-exports.searchProduct = async (req, res) => {
+async function searchProduct(req, res) {
   try {
     const { keyword, typeCategory } = req.query;
     const data = await searchService.searchProductByName({
@@ -15,7 +15,8 @@ exports.searchProduct = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(error);
     abort(error.status, error.message);
   }
-};
+}
+
+module.exports = searchProduct;

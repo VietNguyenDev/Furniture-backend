@@ -1,3 +1,4 @@
+const { abort } = require('../../helpers/error');
 const { Product } = require('../../models');
 
 exports.searchProductByName = async ({ keyword, typeCategory }) => {
@@ -7,12 +8,13 @@ exports.searchProductByName = async ({ keyword, typeCategory }) => {
       'like',
       `%${keyword}%`
     );
+    if (!products) abort(404, 'Product Not Found');
     if (typeCategory === 'all') return products;
     const result = products.filter(
       (product) => product.categoryId === typeCategory
     );
     return result;
   } catch (error) {
-    return error;
+    abort(400, 'Params Error');
   }
 };
