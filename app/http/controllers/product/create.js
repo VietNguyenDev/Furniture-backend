@@ -64,24 +64,34 @@ async function create(req, res) {
     const resultFile3D = await upload3D(listFile[findIndexHaveFileIsGlb]?.path);
     //remove file glb in list file
     listFile.splice(findIndexHaveFileIsGlb, 1);
+
     const resultFileImage = await uploadImage(listFile[0]?.path);
+    const productImages = [];
+    for (let i = 1; i < listFile.length; i++) {
+      const imageURL = await uploadImage(listFile[i]?.path);
+      productImages.push(imageURL?.secure_url);
+    }
+  
     const productSlug = convertToSlug(params.productName);
     await validation({
       ...params,
       productSlug,
       productImg: resultFileImage?.secure_url,
       product3DModelPath: resultFile3D?.secure_url,
+      productThumbnail: productImages.join(',')
     });
     const data = await productService.create({
       ...params,
       productImg: resultFileImage?.secure_url,
       productSlug,
       product3DModelPath: resultFile3D?.secure_url,
+      productThumbnail: productImages.join(',')
     });
+    
     if (data) {
       return res.status(200).send({
         message: 'Create product success',
-        data,
+        data
       });
     }
   } catch (error) {

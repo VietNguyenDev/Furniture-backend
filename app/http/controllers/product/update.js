@@ -69,6 +69,12 @@ async function update(req, res) {
 
     listFile.splice(findIndexHaveFileIsGlb, 1);
     const resultFileImage = await uploadImage(listFile[0]?.path);
+
+    const productImages = [];
+    for (let i = 1; i < listFile.length; i++) {
+      const imageURL = await uploadImage(listFile[i]?.path);
+      productImages.push(imageURL?.secure_url);
+    }
     const productSlug = convertToSlug(params.productName);
     
     await validation({
@@ -78,6 +84,7 @@ async function update(req, res) {
       productSlug,
       productImg: resultFileImage?.secure_url,
       product3DModelPath: resultFile3D?.secure_url,
+      productThumbnail: productImages.join(',')
     });
 
     const data = await productService.update({
@@ -87,9 +94,10 @@ async function update(req, res) {
       productImg: resultFileImage?.secure_url,
       productSlug,
       product3DModelPath: resultFile3D?.secure_url,
+      productThumbnail: productImages.join(',')
     });
     if (data) {
-      return res.status(204).send({
+      return res.status(200).send({
         message: 'Update product success',
         data,
       });
