@@ -18,7 +18,7 @@ exports.createBanner = async ({ alt, path, filename, position }) => {
 
 exports.getBanner = async () => {
   try {
-    const banner = await Banner.query().select('id', 'alt', 'url');
+    const banner = await Banner.query().select('id', 'alt', 'url', 'position');
     return banner;
   } catch (error) {
     abort(error.status, error.message);
