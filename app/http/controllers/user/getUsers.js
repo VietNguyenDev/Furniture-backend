@@ -9,6 +9,7 @@ async function validation(searchInformation) {
       limit: Joi.number().integer().min(0).required(),
       page: Joi.number().integer().min(0).required(),
       keyword: Joi.string().allow(''),
+      role: Joi.number().valid(1, 2).allow(''),
     });
 
     return await schema.validateAsync(searchInformation);
@@ -22,11 +23,22 @@ async function getUsers(req, res) {
     limit: req.query.limit,
     page: req.query.page,
     keyword: req.query.keyword,
+    role: req.query.role || '',
   };
 
   await validation(searchInformation);
 
   const responseData = await userService.getUsers(searchInformation);
+  if (req.query.role) {
+    const dataFilter = responseData.users.filter(
+      (item) => item.role === Number(req.query.role)
+    );
+    return res.status(200).send({
+      ...responseData,
+      users: dataFilter,
+      total: dataFilter.length,
+    });
+  }
   return res.status(200).send(responseData);
 }
 
