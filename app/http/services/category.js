@@ -20,16 +20,15 @@ exports.create = async ({ categoryName, imageFilePath, categorySlug, imageFileNa
   }
 };
 
-exports.update = async ({ categoryId, categoryName, categoryIcon, categorySlug }) => {
-  const category = await Category.query().findOne({
-    categoryName,
-  });
+exports.update = async (params) => {
+  const category = await Category.query().findById(params.categoryId);
 
-  if (category && category.id === categoryId) return abort(400, 'This category is already exits');
+  if (!category) return abort(400, 'This category is not already exits');
 
-  await Category.query().findById(categoryId).update({ categoryName, categoryIcon: categoryIcon, categorySlug });
+  const {categoryId, ...paramsWithoutId} = params;
+  const result = await Category.query().findById(categoryId).update(paramsWithoutId);
 
-  return '';
+  return result;
 };
 
 exports.getList = () => {

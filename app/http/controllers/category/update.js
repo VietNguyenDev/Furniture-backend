@@ -2,30 +2,56 @@ const Joi = require('joi');
 
 const categoryService = require('../../services/category');
 const { abort } = require('../../../helpers/error');
+const convertToSlug = require('../../../utils/common');
+const { uploadImage } = require('../../../config/cloudinary');
 
-async function validation({ categoryId, categoryName }) {
+async function validation({ categoryId, categoryName, categoryIcon, categorySlug}) {
   try {
     const schema = Joi.object().keys({
       categoryId: Joi.number().integer().min(1),
       categoryName: Joi.string(),
+      categoryIcon: Joi.string(),
+      categorySlug: Joi.string(),
     });
 
-    return await schema.validateAsync({ categoryId, categoryName });
+    return await schema.validateAsync({ categoryId, categoryName, categoryIcon, categorySlug });
   } catch (error) {
     return abort(400, 'Params error');
   }
 }
 
 async function update(req, res) {
-  const { categoryId } = req.params;
-  const { categoryName, categorySlug } = req.body;
-  const categoryIcon = req.file.filename;
+  try {
+    const { categoryId } = req.params;
+    const params = req.body;
+    const file = req.file;
+    const categoryIcon = await uploadImage(file?.path);
+    const categorySlug = await convertToSlug(params.categoryName)
 
-  await validation({ categoryId, categoryName });
+    await validation({
+      ...params,
+      categoryId: categoryId,
+      categorySlug,
+      categoryIcon: categoryIcon?.secure_url
+    });
 
-  await categoryService.update({ categoryId, categoryName, categoryIcon: categoryIcon, categorySlug });
+    const data = await categoryService.update({ 
+      ...params,
+      categoryId: categoryId,
+      categorySlug,
+      categoryIcon: categoryIcon?.secure_url
+    });
 
-  return res.status(204).send();
+    if (data) {
+      return res.status(200).send({
+        message: 'Update category success',
+        data,
+      });
+    }
+
+  } catch (error) {
+    return abort(400, error.message)
+  }
 }
 
 module.exports = update;
