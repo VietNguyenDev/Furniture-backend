@@ -8,4 +8,5 @@ const router = express.Router();
 
 router.post('/cart', auth, checkPermission, cartController.addToCart);
 router.get('/activeCart', auth, checkPermission, cartController.getActiveCart);
+router.delete('/cart', auth, checkPermission, cartController.emptyCart);
 module.exports = router;
