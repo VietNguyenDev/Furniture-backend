@@ -3,17 +3,17 @@ const searchService = require('../../services/search');
 
 async function searchProduct(req, res) {
   try {
-    const { keyword, typeCategory } = req.query;
-    const data = await searchService.searchProductByName({
+    const { keyword, typeCategory, limit, page } = req.query;
+    const result = await searchService.searchProductByName({
       keyword,
       typeCategory,
+      limit,
+      page,
     });
-    if (data) {
-      return res.status(200).send({
-        message: 'Search product success',
-        data,
-      });
-    }
+    return res.status(200).send({
+      message: 'Search product success',
+      data: result,
+    });
   } catch (error) {
     abort(error.status, error.message);
   }

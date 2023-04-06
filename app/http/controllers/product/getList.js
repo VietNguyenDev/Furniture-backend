@@ -22,17 +22,19 @@ async function getList(req, res) {
     const filters = req.query;
     const categoryId = filters.categoryId || null;
     const sortBy = filters.sortBy || null;
-  
+
     await validation({ limit, page });
-  
-    const products = await productService.getList({ limit, page, categoryId, sortBy });
-    //console.log(products);
-  
+
+    const products = await productService.getList({
+      limit,
+      page,
+      categoryId,
+      sortBy,
+    });
     return res.status(200).send(products);
   } catch (error) {
     abort(error.status, error.message);
   }
-
 }
 
 module.exports = getList;

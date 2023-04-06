@@ -1,4 +1,6 @@
 exports.up = async (knex) => {
+  const hasTable = await knex.schema.hasTable('users');
+  if (hasTable) return;
   await knex.schema.createTable('users', (table) => {
     table.increments('id').primary();
     table.string('email', 127).collate('latin1_general_ci').notNullable();
@@ -15,7 +17,9 @@ exports.up = async (knex) => {
     table.string('refresh_token', 255).notNullable();
 
     table.timestamp('created_at').defaultTo(knex.raw('CURRENT_TIMESTAMP'));
-    table.timestamp('updated_at').defaultTo(knex.raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
+    table
+      .timestamp('updated_at')
+      .defaultTo(knex.raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
 
     table.unique('email');
   });
