@@ -22,6 +22,7 @@ async function getList(req, res) {
     const filters = req.query;
     const categoryId = filters.categoryId || null;
     const sortBy = filters.sortBy || null;
+    const userId = req.query.userId || null;
 
     await validation({ limit, page });
 
@@ -30,6 +31,7 @@ async function getList(req, res) {
       page,
       categoryId,
       sortBy,
+      userId,
     });
     return res.status(200).send(products);
   } catch (error) {

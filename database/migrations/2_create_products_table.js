@@ -30,7 +30,6 @@ exports.up = async (knex) => {
       .defaultTo(knex.raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
 
     table.unique('productName');
-
     table.index('categoryId');
   });
 };
