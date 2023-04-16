@@ -71,27 +71,27 @@ async function create(req, res) {
       const imageURL = await uploadImage(listFile[i]?.path);
       productImages.push(imageURL?.secure_url);
     }
-  
+
     const productSlug = convertToSlug(params.productName);
     await validation({
       ...params,
       productSlug,
-      productImg: resultFileImage?.secure_url,
+      productThumbnail: resultFileImage?.secure_url,
+      productImg: productImages.join(','),
       product3DModelPath: resultFile3D?.secure_url,
-      productThumbnail: productImages.join(',')
     });
     const data = await productService.create({
       ...params,
-      productImg: resultFileImage?.secure_url,
+      productImg: productImages.join(','),
       productSlug,
       product3DModelPath: resultFile3D?.secure_url,
-      productThumbnail: productImages.join(',')
+      productThumbnail: resultFileImage?.secure_url,
     });
-    
+
     if (data) {
       return res.status(200).send({
         message: 'Create product success',
-        data
+        data,
       });
     }
   } catch (error) {

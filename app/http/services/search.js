@@ -1,5 +1,5 @@
 const { abort } = require('../../helpers/error');
-const { Product } = require('../../models');
+const { Products } = require('../../models');
 
 exports.searchProductByName = async ({
   keyword,
@@ -10,15 +10,15 @@ exports.searchProductByName = async ({
   try {
     const offset = page * limit - limit;
 
-    const products = await Product.query()
+    const products = await Products.query()
       .where('productName', 'like', `%${keyword}%`)
       .offset(offset)
       .limit(limit);
-    let total = await Product.query()
+    let total = await Products.query()
       .where('productName', 'like', `%${keyword}%`)
       .count();
 
-    if (!products) abort(404, 'Product Not Found');
+    if (!products) abort(404, 'Products Not Found');
     if (typeCategory === 'all') return { products, total };
     const result = products.filter(
       (product) => product.categoryId === typeCategory

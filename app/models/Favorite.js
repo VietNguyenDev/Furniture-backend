@@ -7,7 +7,7 @@ class Favorite extends Model {
 
   static get relationMappings() {
     const User = require('./User');
-    const Product = require('./Product');
+    const Products = require('./Products');
     return {
       user: {
         relation: Model.BelongsToOneRelation,
@@ -19,7 +19,7 @@ class Favorite extends Model {
       },
       product: {
         relation: Model.BelongsToOneRelation,
-        modelClass: Product,
+        modelClass: Products,
         join: {
           from: 'favorites.productId',
           to: 'products.id',

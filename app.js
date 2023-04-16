@@ -16,16 +16,14 @@ Model.knex(knex);
 if (!fs.existsSync('./uploads')) {
   fs.mkdirSync('./uploads');
 }
-// const upload = multer({ dest: 'uploads/' });
-
 const app = express();
 const port = 8080;
-app.use(morgan('combined'));
+app.use(
+  morgan(' :method :url :status :res[content-length] - :response-time ms')
+);
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-// app.use(upload.array()); // for parsing multipart/form-data
-// app.use("/uploads", express.static("uploads"));
 Object.keys(routes).map((route) => app.use('/api', routes[route]));
 
 app.use((req, res) => {

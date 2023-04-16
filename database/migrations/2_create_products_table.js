@@ -5,7 +5,7 @@ exports.up = async (knex) => {
     table.increments('id').primary();
     table.string('productName', 250).collate('utf8_general_ci').notNullable();
     table.string('productSlug', 250).collate('utf8_general_ci').notNullable();
-    table.string('productImg', 250).collate('utf8_general_ci').notNullable();
+    table.text('productImg').notNullable();
     table.string('productCode', 50).notNullable();
     table.string('productSize', 50).notNullable();
     table.string('productColor', 50).notNullable();

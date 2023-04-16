@@ -10,7 +10,7 @@ exports.addFavorite = async ({ productId, userId }) => {
       userId,
     });
     if (favorite) {
-      return abort(400, 'Product already in favorite');
+      return abort(400, 'Products already in favorite');
     }
     const result = await Favorite.query().insert({
       productId,
@@ -31,7 +31,7 @@ exports.removeFavorite = async ({ productId, userId }) => {
     });
 
     if (!favorite) {
-      return abort(400, 'Product not in favorite');
+      return abort(400, 'Products not in favorite');
     }
     await Favorite.query().deleteById(favorite.id);
   } catch (error) {

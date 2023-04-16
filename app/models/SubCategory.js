@@ -1,9 +1,9 @@
-const { Model } = require('objection');
+// const { Model } = require('objection');
 
-class SubCategory extends Model {
-  static get tableName() {
-    return 'subCategory';
-  }
-}
+// class SubCategory extends Model {
+//   static get tableName() {
+//     return 'subCategory';
+//   }
+// }
 
-module.exports = SubCategory;
+// module.exports = SubCategory;

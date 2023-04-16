@@ -6,17 +6,18 @@ class Orders extends Model {
   }
 
   static get relationMappings() {
-    const Cart = require('./Cart');
+    const Products = require('./Products');
     const Billing = require('./Bill');
     const ShippingDetail = require('./ShippingDetail');
+    const User = require('./User');
 
     return {
-      cart: {
+      product: {
         relation: Model.BelongsToOneRelation,
-        modelClass: Cart,
+        modelClass: Products,
         join: {
-          from: 'orders.cartId',
-          to: 'cart.id',
+          from: 'orders.productId',
+          to: 'products.id',
         },
       },
       shipping: {
@@ -33,6 +34,14 @@ class Orders extends Model {
         join: {
           from: 'orders.billId',
           to: 'bill.id',
+        },
+      },
+      user: {
+        relation: Model.BelongsToOneRelation,
+        modelClass: User,
+        join: {
+          from: 'orders.userId',
+          to: 'users.id',
         },
       },
     };

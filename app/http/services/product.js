@@ -1,12 +1,12 @@
 /* eslint-disable no-undef */
-const { Product, Category, Favorite } = require('../../models');
+const { Products, Category, Favorite } = require('../../models');
 
 const { abort } = require('../../helpers/error');
 
 exports.create = async (params) => {
   // check product is already exits
 
-  const isExitsProduct = await Product.query().findOne({
+  const isExitsProduct = await Products.query().findOne({
     productName: params.productName,
   });
 
@@ -16,25 +16,33 @@ exports.create = async (params) => {
 
   if (!isExitsCategory) return abort(400, 'This category is not already exits');
 
-  const result = await Product.query().insert(params);
+  const result = await Products.query().insert(params);
 
   return result;
 };
 
-exports.getList = async ({ limit, page, categoryId, userId }) => {
+exports.getList = async ({ limit, page, categoryId, userId, sortBy }) => {
   const offset = page * limit - limit;
-  let products = Product.query().offset(offset).limit(limit);
+  const [field, type] = sortBy ? sortBy.split('=') : ['id', 'asc'];
+  let products = await Products.query()
+    .offset(offset)
+    .limit(limit)
+    .orderBy(field, type);
   let favoriteList = null;
-  let total = Product.query().count();
+  let total = Products.query().count();
 
   if (categoryId) {
     // filter by category
-    products = Product.query()
+    products = await Products.query()
       .offset(offset)
       .limit(limit)
-      .where('categoryId', categoryId);
+      .where('categoryId', categoryId)
+      .orderBy(field, type);
 
-    total = Product.query().count().where('categoryId', categoryId);
+    total = await Products.query()
+      .count()
+      .where('categoryId', categoryId)
+      .skipUndefined();
   }
 
   if (userId) {
@@ -67,9 +75,9 @@ exports.getList = async ({ limit, page, categoryId, userId }) => {
 };
 
 exports.getDetail = async ({ productId }) => {
-  const product = await Product.query().findById(productId);
+  const product = await Products.query().findById(productId);
 
-  if (!product) return abort(400, 'Product is not already exists');
+  if (!product) return abort(400, 'Products is not already exists');
 
   if (product.favoriteId) {
     product.favoriteStatus = true;
@@ -79,7 +87,7 @@ exports.getDetail = async ({ productId }) => {
 };
 
 exports.update = async (params) => {
-  const product = await Product.query().findById(params.productId);
+  const product = await Products.query().findById(params.productId);
   if (!product) return abort(400, 'This product is not already exits');
 
   const category = await Category.query().findById(params.categoryId);
@@ -87,7 +95,7 @@ exports.update = async (params) => {
 
   const { productId, ...paramsWithoutId } = params;
 
-  const result = await Product.query()
+  const result = await Products.query()
     .findById(productId)
     .update(paramsWithoutId);
 
@@ -95,11 +103,11 @@ exports.update = async (params) => {
 };
 
 exports.remove = async ({ productId }) => {
-  const product = await Product.query().findById(productId);
+  const product = await Products.query().findById(productId);
 
-  if (!product) return abort(400, 'Product is not already exists');
+  if (!product) return abort(400, 'Products is not already exists');
 
-  await Product.query().findById(productId).delete();
+  await Products.query().findById(productId).delete();
 
   return '';
 };

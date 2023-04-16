@@ -4,14 +4,15 @@ const { getAllOrdersByUserId } = require('../../services/orders');
 async function getAllByUserId(req, res) {
   try {
     const { page, limit, sortBy, userId } = req.query;
-    const data = await getAllOrdersByUserId({
+    const { results, total } = await getAllOrdersByUserId({
       page,
       limit,
       sortBy,
       userId,
     });
     return res.status(200).send({
-      data,
+      data: results,
+      total,
       message: 'Get all orders successfully',
     });
   } catch (error) {

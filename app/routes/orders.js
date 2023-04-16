@@ -5,7 +5,8 @@ const { auth } = require('../http/middlewares');
 const checkPermission = require('../http/middlewares/permission');
 const router = express.Router();
 
-router.post('/orders', auth, checkPermission, ordersController.create);
-router.get('/orders', auth, checkPermission, ordersController.getAllByUserId);
+router.post('/orders', auth, ordersController.create);
+router.get('/orders', auth, ordersController.getAllByUserId);
+router.get('/orders/getAll', auth, checkPermission, ordersController.getAll);
 
 module.exports = router;

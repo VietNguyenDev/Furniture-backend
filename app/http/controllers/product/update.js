@@ -61,10 +61,11 @@ async function update(req, res) {
   try {
     const { productId, categoryId } = req.params;
 
-    
     const params = req.body;
     const listFile = req.files;
-    const findIndexHaveFileIsGlb = listFile.findIndex((file) => file.originalname.includes('.glb'));
+    const findIndexHaveFileIsGlb = listFile.findIndex((file) =>
+      file.originalname.includes('.glb')
+    );
     const resultFile3D = await upload3D(listFile[findIndexHaveFileIsGlb]?.path);
 
     listFile.splice(findIndexHaveFileIsGlb, 1);
@@ -76,25 +77,25 @@ async function update(req, res) {
       productImages.push(imageURL?.secure_url);
     }
     const productSlug = convertToSlug(params.productName);
-    
+
     await validation({
       ...params,
       productId: productId,
       categoryId: categoryId,
       productSlug,
-      productImg: resultFileImage?.secure_url,
+      productImg: productImages.join(','),
       product3DModelPath: resultFile3D?.secure_url,
-      productThumbnail: productImages.join(',')
+      productThumbnail: resultFileImage?.secure_url,
     });
 
     const data = await productService.update({
       ...params,
       productId: productId,
       categoryId: categoryId,
-      productImg: resultFileImage?.secure_url,
+      productImg: productImages.join(','),
       productSlug,
       product3DModelPath: resultFile3D?.secure_url,
-      productThumbnail: productImages.join(',')
+      productThumbnail: resultFileImage?.secure_url,
     });
     if (data) {
       return res.status(200).send({
@@ -102,10 +103,8 @@ async function update(req, res) {
         data,
       });
     }
-
-    
   } catch (error) {
-    abort (400, error.message)
+    abort(400, error.message);
   }
 }
 
