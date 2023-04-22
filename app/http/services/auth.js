@@ -8,17 +8,14 @@ const { sendEmail } = require('../../helpers/mailer');
 const { randomCode } = require('../../helpers/utils');
 
 exports.signIn = async ({ email, password }) => {
-  const user = await User.query()
-    .findOne('email', email);
-  if (!user || !(await bcrypt.compare(password, user.password))) return abort(400, 'email or password is incorrect');
+  const user = await User.query().findOne('email', email);
+  if (!user || !(await bcrypt.compare(password, user.password)))
+    return abort(400, 'email or password is incorrect');
   const accessToken = await generate({ userId: user.id });
   return { accessToken };
 };
 
-exports.signUp = async ({
-  email,
-  password,
-}) => {
+exports.signUp = async ({ email, password }) => {
   const findUser = await User.query().findOne({
     email,
   });
@@ -29,13 +26,12 @@ exports.signUp = async ({
   const hashPassword = await bcrypt.hash(password, salt);
 
   // if (roleEnum[role.toUpperCase()]) {
-  const user = await User.query()
-    .insert({
-      email,
-      password: hashPassword,
-      role: 2,
-      refresh_token: process.env.REFRESH_TOKEN,
-    });
+  const user = await User.query().insert({
+    email,
+    password: hashPassword,
+    role: 2,
+    refreshToken: process.env.REFRESH_TOKEN,
+  });
 
   const result = {
     id: user.id,
@@ -79,7 +75,11 @@ exports.verifyCode = async ({ email, code }) => {
   const user = await User.query().findOne({ email });
   if (!user) abort(400, 'User is not found');
 
-  if (new Date().getTime() > new Date(user.code_time).getTime() + 60 * 60 * 1000) abort(400, 'Code is expired');
+  if (
+    new Date().getTime() >
+    new Date(user.code_time).getTime() + 60 * 60 * 1000
+  )
+    abort(400, 'Code is expired');
   if (code !== user.code) abort(400, 'Code is not valid');
 };
 
@@ -87,7 +87,11 @@ exports.forgotPass = async ({ email, code, password }) => {
   const user = await User.query().findOne({ email });
   if (!user) abort(400, 'User is not found');
 
-  if (new Date().getTime() > new Date(user.code_time).getTime() + 60 * 60 * 1000) abort(400, 'Code is expired');
+  if (
+    new Date().getTime() >
+    new Date(user.code_time).getTime() + 60 * 60 * 1000
+  )
+    abort(400, 'Code is expired');
   if (code !== user.code) abort(400, 'Code is not valid');
 
   const salt = parseInt(process.env.SALT_ROUNDS, 10);

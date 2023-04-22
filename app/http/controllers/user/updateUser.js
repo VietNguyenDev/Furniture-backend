@@ -3,6 +3,7 @@ const Joi = require('joi');
 const userService = require('../../services/user');
 const { abort } = require('../../../helpers/error');
 const genderType = require('../../../enums/Gender');
+const { uploadImage } = require('../../../config/cloudinary');
 
 async function validation(userInformation) {
   try {
@@ -14,33 +15,27 @@ async function validation(userInformation) {
     });
     return await schema.validateAsync(userInformation);
   } catch (error) {
-    return abort(400, 'Params error');
+    return abort(400, error.message);
   }
 }
 
 async function updateUser(req, res) {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
+    const userInformation = req.body;
+    const file = req?.file;
 
-  const {
-    fullName,
-    address,
-    gender,
-    dateOfBirth,
-  } = req.body;
+    const userImg = file && (await uploadImage(file?.path));
+    await validation(userInformation);
 
-  const userInformation = {
-    fullName,
-    address,
-    gender: Number(gender),
-    dateOfBirth,
-  };
-
-  const userImg = req.file.filename;
-
-  await validation(userInformation);
-
-  await userService.updateUser({ ...userInformation, userImg, id });
-  return res.status(204).send();
+    const data = await userService.updateUser({ userInformation, userImg, id });
+    return res.status(200).send({
+      message: 'Update user successfully',
+      data,
+    });
+  } catch (error) {
+    abort(error.status, error.message);
+  }
 }
 
 module.exports = updateUser;

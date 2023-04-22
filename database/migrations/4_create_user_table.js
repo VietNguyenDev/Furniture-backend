@@ -7,14 +7,14 @@ exports.up = async (knex) => {
     table.string('password', 256).collate('latin1_general_ci').notNullable();
     table.integer('role', 1).unsigned().notNullable();
 
-    table.string('full_name', 50).collate('utf8_general_ci').nullable();
+    table.string('fullName', 50).collate('utf8_general_ci').nullable();
     table.string('phone', 20).nullable();
     table.string('address', 127).collate('utf8_general_ci').nullable();
     table.string('gender', 3).collate('utf8_general_ci').nullable();
-    table.date('date_of_birth').nullable();
+    table.date('dateOfBirth').nullable();
     table.string('image', 120).collate('latin1_general_ci').nullable();
 
-    table.string('refresh_token', 255).notNullable();
+    table.string('refreshToken', 255).notNullable();
 
     table.timestamp('created_at').defaultTo(knex.raw('CURRENT_TIMESTAMP'));
     table

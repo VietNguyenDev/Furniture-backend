@@ -72,3 +72,15 @@ exports.getAll = async ({ page, limit }) => {
     abort(500, error.message);
   }
 };
+
+exports.updateStatus = async ({ status, orderId }) => {
+  try {
+    const checkOrder = await Orders.query().findById(orderId);
+    if (!checkOrder) abort(400, 'Order not found');
+    const id = orderId;
+    const result = await Orders.query().patchAndFetchById(id, { status });
+    return result;
+  } catch (error) {
+    abort(500, error.message);
+  }
+};

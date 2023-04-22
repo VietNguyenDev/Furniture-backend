@@ -18,7 +18,7 @@ async function emptyCart(req, res) {
   try {
     const userId = req.user.id;
     await validation({ userId });
-    const result = await cartService.emptyCart({
+    await cartService.emptyCart({
       userId,
     });
     return res.status(200).send({

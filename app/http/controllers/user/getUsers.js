@@ -34,7 +34,6 @@ async function getUsers(req, res) {
       (item) => item.role === Number(req.query.role)
     );
     return res.status(200).send({
-      ...responseData,
       users: dataFilter,
       total: dataFilter.length,
     });
