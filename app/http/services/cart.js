@@ -68,3 +68,26 @@ exports.emptyCart = async ({ userId }) => {
   const result = await Cart.query().deleteById(userId);
   return result;
 };
+
+exports.updateCart = async (id, params) => {
+  try {
+    const { productId } = params;
+    let checkProduct = await Products.query().findById(productId);
+    if (!checkProduct) return abort(400, 'Products not found');
+    const result = await Cart.query().patchAndFetchById(id, {
+      ...params,
+    });
+    return result;
+  } catch (error) {
+    abort(500, error.message);
+  }
+};
+
+exports.deleteCart = async ({ id }) => {
+  try {
+    const result = await Cart.query().deleteById(id);
+    return result;
+  } catch (error) {
+    abort(500, error.message);
+  }
+};

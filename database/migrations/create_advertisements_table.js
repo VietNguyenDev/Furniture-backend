@@ -8,7 +8,7 @@ exports.up = async (knex) => {
     table.string('image', 120).collate('latin1_general_ci').notNullable();
 
     table
-      .integer('product_id')
+      .integer('productId')
       .unsigned()
       .references('products.id')
       .notNullable();
@@ -18,9 +18,9 @@ exports.up = async (knex) => {
       .timestamp('updated_at')
       .defaultTo(knex.raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
 
-    table.unique('product_id');
+    table.unique('productId');
 
-    table.index('product_id');
+    table.index('productId');
   });
 };
 

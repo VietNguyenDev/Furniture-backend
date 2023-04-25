@@ -3,7 +3,7 @@ exports.up = async (knex) => {
   const hasTable = await knex.schema.hasTable('payment');
   if (hasTable) return;
   await knex.schema.createTable('payment', (table) => {
-    table.increments('paymentID').primary();
+    table.increments('id').primary();
     table.string('paymentMethod').notNullable();
     table.string('paymentMethodTitle').notNullable();
     table.string('paymentDescription').notNullable();

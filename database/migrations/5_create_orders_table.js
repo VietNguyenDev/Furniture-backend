@@ -12,10 +12,9 @@ exports.up = async (knex) => {
     table
       .integer('shippingId')
       .unsigned()
-      .references('shipping.id')
+      .references('shipping_detail.id')
       .notNullable();
-    table.integer('userId').unsigned().references('users.id').notNullable();
-    table.index('userId');
+    table.integer('userId', 10).unsigned().notNullable();
     table.index('shippingId');
   });
 };

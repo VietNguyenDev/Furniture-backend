@@ -4,7 +4,6 @@ exports.up = async (knex) => {
   if (hasTable) return;
   await knex.schema.createTable('cart', (table) => {
     table.increments('id').primary();
-    table.string('status', 50).collate('utf8_general_ci');
     table.integer('quantity').notNullable();
     table.integer('subTotal').notNullable();
     table.string('productColor').collate('utf8_general_ci');

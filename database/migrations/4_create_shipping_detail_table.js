@@ -4,7 +4,7 @@ exports.up = async (knex) => {
   if (hasTable) return;
   await knex.schema.createTable('shipping_detail', (table) => {
     table.increments('id').primary();
-    table.integer('userId').unsigned().references('users.id').notNullable();
+    table.integer('userId', 10).unsigned().notNullable();
     table.string('fullName', 50).collate('utf8_general_ci').notNullable();
     table.string('address', 255).collate('utf8_general_ci');
     table.string('province', 255).collate('utf8_general_ci').notNullable();

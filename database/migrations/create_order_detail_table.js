@@ -6,7 +6,7 @@ exports.up = async (knex) => {
     table.integer('price').unsigned().notNullable();
     table.integer('quantity').unsigned().notNullable();
     table.string('productColor', 50).collate('utf8_general_ci').notNullable();
-    table.double('productSize', 50).collate('utf8_general_ci').notNullable();
+    table.string('productSize', 50).collate('utf8_general_ci').notNullable();
     table.integer('orderId').unsigned().references('orders.id').notNullable();
     table
       .integer('productId')

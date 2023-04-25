@@ -3,7 +3,7 @@ exports.up = async (knex) => {
   const hasTable = await knex.schema.hasTable('transaction');
   if (hasTable) return;
   await knex.schema.createTable('transaction', (table) => {
-    table.increments('transactionID').primary();
+    table.increments('id').primary();
     table
       .string('transactionType', 50)
       .collate('utf8_general_ci')

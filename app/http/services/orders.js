@@ -2,32 +2,31 @@ const { abort } = require('../../helpers/error');
 // @ts-ignore
 const { Orders, OrdersDetail } = require('../../models');
 // @ts-ignore
-const ShippingDetail = require('../../models/ShippingDetail');
 const Cart = require('../../models/Cart');
 
 exports.createOrder = async ({ userId, data }) => {
   try {
     let result = [];
     const { cartItems } = data;
-    const shipping = await ShippingDetail.query().insert({
-      ...data.shipping,
-    });
     const createOrder = await Orders.query().insert({
-      shippingId: shipping.id,
+      shippingId: data.shippingId,
       status: 'pending',
       userId,
     });
-    cartItems.forEach(async (item) => {
-      const cart = await Cart.query().findById(item);
-      const orderData = await OrdersDetail.query().insert({
+    const findListCartById = await Cart.query().findByIds(cartItems);
+    const orderData = await OrdersDetail.query().insertGraph(
+      findListCartById.map((item) => ({
         orderId: createOrder.id,
-        productId: cart.productId,
-        productColor: cart.productColor,
-        productSize: cart.productSize,
-        price: cart.subTotal,
-        quantity: cart.quantity,
-      });
-      result.push(orderData);
+        productId: item.productId,
+        productColor: item.productColor,
+        productSize: item.productSize,
+        price: item.subTotal,
+        quantity: item.quantity,
+      }))
+    );
+    result.push(orderData);
+    // delete all cart item
+    cartItems.forEach(async (item) => {
       await Cart.query().deleteById(item);
     });
     if (result.length > 0) return result;
@@ -42,9 +41,7 @@ exports.getAllOrdersByUserId = async ({ page, limit, userId, sortBy }) => {
     const result = await Orders.query()
       .where({ userId })
       .orderBy('id', sortBy || 'desc')
-      .withGraphFetched('product')
       .withGraphFetched('shipping')
-      .withGraphFetched('bill')
       .page(page - 1, limit);
     if (!result) abort(400, 'Orders not found');
     return result;
@@ -57,10 +54,18 @@ exports.getAll = async ({ page, limit }) => {
   try {
     if (page < 1 || limit < 1) abort(400, 'Invalid page or limit');
     const result = await Orders.query()
-      .withGraphFetched('product')
       .withGraphFetched('shipping')
-      .withGraphFetched('bill')
       .page(page - 1, limit);
+    // fetch all order Detail of each order
+    const orderDetail = await OrdersDetail.query().withGraphFetched('product');
+    result.results.forEach((order) => {
+      orderDetail.forEach((detail) => {
+        if (order.id === detail.orderId) {
+          if (!order.orderDetail) order.orderDetail = [];
+          order.orderDetail.push(detail);
+        }
+      });
+    });
     return result;
   } catch (error) {
     abort(500, error.message);

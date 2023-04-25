@@ -22,7 +22,7 @@ async function emptyCart(req, res) {
       userId,
     });
     return res.status(200).send({
-      message: 'Delete Cart Susscessfull',
+      message: 'Delete All Cart successfully',
     });
   } catch (error) {
     abort(error.status, error.message);

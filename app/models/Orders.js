@@ -6,7 +6,6 @@ class Orders extends Model {
   }
 
   static get relationMappings() {
-    const Billing = require('./Bill');
     const ShippingDetail = require('./ShippingDetail');
     const User = require('./User');
 
@@ -16,15 +15,7 @@ class Orders extends Model {
         modelClass: ShippingDetail,
         join: {
           from: 'orders.shippingId',
-          to: 'shipping_details.id',
-        },
-      },
-      bill: {
-        relation: Model.BelongsToOneRelation,
-        modelClass: Billing,
-        join: {
-          from: 'orders.billId',
-          to: 'bill.id',
+          to: 'shipping_detail.id',
         },
       },
       user: {

@@ -9,6 +9,8 @@
     "test": "mocha tests --timeout=15000",
     "eslint": "eslint './app/**/*.js'",
     "migrate:run": "knex migrate:latest",
+    "migrate:up": "knex migrate:up",
+    "migrate:down": "knex migrate:down",
     "migrate:rollback": "knex migrate:rollback",
     "seed:run": "knex seed:run",
     "docker": "sudo docker-compose up -d webserver mysql phpmyadmin minio"
