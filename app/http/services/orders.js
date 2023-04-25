@@ -1,42 +1,44 @@
 const { abort } = require('../../helpers/error');
-const { Orders } = require('../../models');
-const Billing = require('../../models/Bill');
+// @ts-ignore
+const { Orders, OrdersDetail } = require('../../models');
+// @ts-ignore
 const ShippingDetail = require('../../models/ShippingDetail');
 const Shipping = require('../../models/Shipping');
 const Cart = require('../../models/Cart');
 
 exports.createOrder = async ({ userId, data }) => {
   try {
+    let result = [];
     const { shippingLines, cartItems } = data;
     const shippingResult = await Shipping.query().insert({
       ...shippingLines,
       userId,
     });
-    await ShippingDetail.query().insert({
+    const shipping = await ShippingDetail.query().insert({
       ...data.shipping,
       shippingId: shippingResult.id,
       shippingTotal: shippingLines.total,
       shippingTax: shippingLines.total,
     });
+    const createOrder = await Orders.query().insert({
+      shippingId: shipping.id,
+      status: 'pending',
+      userId,
+    });
     cartItems.forEach(async (item) => {
       const cart = await Cart.query().findById(item);
-      const billResult = await Billing.query().insert({
-        profit: cart.subTotal,
-        userId,
-      });
-      await Orders.query().insert({
+      const orderData = await OrdersDetail.query().insert({
+        orderId: createOrder.id,
         productId: cart.productId,
-        shippingId: shippingResult.id,
-        billId: billResult.id,
-        status: 'pending',
-        userId,
         productColor: cart.productColor,
         productSize: cart.productSize,
+        price: cart.subTotal,
         quantity: cart.quantity,
-        subTotal: cart.subTotal,
       });
+      result.push(orderData);
       await Cart.query().deleteById(item);
     });
+    if (result.length > 0) return result;
   } catch (error) {
     abort(500, error);
   }

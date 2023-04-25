@@ -5,10 +5,11 @@ exports.up = async (knex) => {
     table.increments('id').primary();
     table.integer('price').unsigned().notNullable();
     table.integer('quantity').unsigned().notNullable();
-
-    table.integer('order_id').unsigned().references('orders.id').notNullable();
+    table.string('productColor', 50).collate('utf8_general_ci').notNullable();
+    table.double('productSize', 50).collate('utf8_general_ci').notNullable();
+    table.integer('orderId').unsigned().references('orders.id').notNullable();
     table
-      .integer('product_id')
+      .integer('productId')
       .unsigned()
       .references('products.id')
       .notNullable();
@@ -18,8 +19,8 @@ exports.up = async (knex) => {
       .timestamp('updated_at')
       .defaultTo(knex.raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
 
-    table.index('order_id');
-    table.index('product_id');
+    table.index('orderId');
+    table.index('productId');
   });
 };
 

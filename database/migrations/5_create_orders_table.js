@@ -9,28 +9,14 @@ exports.up = async (knex) => {
     table
       .timestamp('updated_at')
       .defaultTo(knex.raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
-    table.string('productColor').collate('utf8_general_ci');
-    table.string('productSize').collate('utf8_general_ci');
-    table.integer('quantity').notNullable();
-    table.integer('subTotal').notNullable();
-
     table
       .integer('shippingId')
       .unsigned()
       .references('shipping.id')
       .notNullable();
-    table.integer('billId').unsigned().references('bill.id').notNullable();
     table.integer('userId').unsigned().references('users.id').notNullable();
-    table
-      .integer('productId')
-      .unsigned()
-      .references('products.id')
-      .notNullable();
-
     table.index('userId');
-    table.index('productId');
     table.index('shippingId');
-    table.index('billId');
   });
 };
 
