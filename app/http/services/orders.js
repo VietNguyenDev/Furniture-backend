@@ -3,22 +3,14 @@ const { abort } = require('../../helpers/error');
 const { Orders, OrdersDetail } = require('../../models');
 // @ts-ignore
 const ShippingDetail = require('../../models/ShippingDetail');
-const Shipping = require('../../models/Shipping');
 const Cart = require('../../models/Cart');
 
 exports.createOrder = async ({ userId, data }) => {
   try {
     let result = [];
-    const { shippingLines, cartItems } = data;
-    const shippingResult = await Shipping.query().insert({
-      ...shippingLines,
-      userId,
-    });
+    const { cartItems } = data;
     const shipping = await ShippingDetail.query().insert({
       ...data.shipping,
-      shippingId: shippingResult.id,
-      shippingTotal: shippingLines.total,
-      shippingTax: shippingLines.total,
     });
     const createOrder = await Orders.query().insert({
       shippingId: shipping.id,
