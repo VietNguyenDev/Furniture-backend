@@ -6,7 +6,7 @@ const { auth } = require('../http/middlewares');
 
 const router = express.Router();
 
-router.post('/favorite', auth, checkPermission, favoriteController.addFavorite);
+router.post('/favorite', auth, favoriteController.addFavorite);
 router.delete(
   '/favorite',
   auth,

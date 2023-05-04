@@ -83,3 +83,32 @@ exports.updateStatus = async ({ status, orderId }) => {
     abort(500, error.message);
   }
 };
+
+exports.getOrdersById = async ({ id }) => {
+  try {
+    const result = await Orders.query()
+      .findById(id)
+      .withGraphFetched('shipping');
+
+    const ordersDetail = await OrdersDetail.query().where({ orderId: id });
+    const data = {
+      ...result,
+      ordersDetail,
+    };
+    return data;
+  } catch (error) {
+    abort(500, error.message);
+  }
+};
+
+exports.getOrderDetailById = async ({ id }) => {
+  try {
+    const result = await OrdersDetail.query()
+      .findById(id)
+      .withGraphFetched('product');
+    if (!result) abort(404, 'Orders not Found!!');
+    return result;
+  } catch (error) {
+    abort(500, error.message);
+  }
+};

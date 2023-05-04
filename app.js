@@ -18,9 +18,7 @@ if (!fs.existsSync('./uploads')) {
 }
 const app = express();
 const port = 8080;
-app.use(
-  morgan(' :method :url :status :res[content-length] - :response-time ms')
-);
+app.use(morgan('combined'));
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());

@@ -18,13 +18,14 @@ exports.addItemToCart = async ({
     let checkCart = await Cart.query().findOne({
       productId,
       userId,
+      productSize,
+      productColor,
     });
 
     if (checkCart) {
-      let newQuantity = checkCart.quantity + quantity;
       let result = await Cart.query().patchAndFetchById(checkCart.id, {
-        quantity: newQuantity,
-        subTotal: newQuantity * checkProduct.sellingPrice,
+        quantity: quantity,
+        subTotal: quantity * checkProduct.sellingPrice,
       });
       return {
         products: checkProduct,
