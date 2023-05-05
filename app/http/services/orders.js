@@ -87,12 +87,14 @@ exports.updateStatus = async ({ status, orderId }) => {
 exports.getOrdersById = async ({ id }) => {
   try {
     const result = await Orders.query()
-      .findById(id)
+      .where({ id })
       .withGraphFetched('shipping');
 
-    const ordersDetail = await OrdersDetail.query().where({ orderId: id });
+    const ordersDetail = await OrdersDetail.query()
+      .where({ orderId: id })
+      .withGraphFetched('product');
     const data = {
-      ...result,
+      ...result[0],
       ordersDetail,
     };
     return data;
@@ -104,7 +106,7 @@ exports.getOrdersById = async ({ id }) => {
 exports.getOrderDetailById = async ({ id }) => {
   try {
     const result = await OrdersDetail.query()
-      .findById(id)
+      .where({ id })
       .withGraphFetched('product');
     if (!result) abort(404, 'Orders not Found!!');
     return result;
