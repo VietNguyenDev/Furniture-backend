@@ -9,7 +9,6 @@ async function validation(data) {
       address: Joi.string().min(1).max(255).required(),
       district: Joi.string().min(1).max(255).required(),
       ward: Joi.string().min(1).max(255).required(),
-      postcode: Joi.string().min(1).max(255),
       phone: Joi.string().min(1).max(255).required(),
     });
 
